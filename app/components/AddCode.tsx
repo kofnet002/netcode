@@ -45,7 +45,7 @@ const AddCode = () => {
         onClick={() => setModalOpen(!modalOpen)}
         className="btn btn-primary w-full"
       >
-        Add code <AiOutlinePlus className="ml-2" size={18} />
+        <AiOutlinePlus className="mr-1" size={18} /> Add code
       </button>
       <div className="grid grid-flow-col gap-5 text-center auto-cols-max"></div>
       <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
