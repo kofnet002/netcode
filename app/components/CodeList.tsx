@@ -8,24 +8,13 @@ interface CodeListProps {
 }
 
 const CodeList: FC<CodeListProps> = ({ codes }) => {
-  console.log("codes", codes.length);
   return (
     <div className="overflow-x-auto">
       {codes.length ? (
-        <div>
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Tasks</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {codes.map((code) => (
-                <Code code={code} />
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-wrap items-center justify-center gap-5">
+          {codes.map((code) => (
+            <Code key={code.id} code={code} />
+          ))}
         </div>
       ) : (
         <div
@@ -39,10 +28,10 @@ const CodeList: FC<CodeListProps> = ({ codes }) => {
         >
           <Image
             src="/crying-emoji.gif"
-            priority
             width={200}
             height={800}
             alt="sad emoji"
+            priority
           />
           <p className="font-bold text-2xl">You don't have any codes yet!</p>
         </div>
