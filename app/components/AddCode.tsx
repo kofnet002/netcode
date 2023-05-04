@@ -30,12 +30,20 @@ const AddCode = () => {
     e.preventDefault();
 
     await addNote({
-      id: uuidv4(),
+      id: null,
       topic: note.topic,
       code: note.code,
       url: note.url,
       author: note.author,
-      created:null,
+      created: null,
+    });
+
+    setNote({
+      id: "",
+      topic: "",
+      code: "",
+      url: "",
+      author: "",
     });
 
     router.refresh(); // refresh the page to update the UI

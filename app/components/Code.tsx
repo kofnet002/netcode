@@ -16,12 +16,11 @@ const Code: React.FC<CodeProps> = ({ code }) => {
   const [openModalView, setOpenModalView] = useState<boolean>(false);
 
   const [codeToEdit, setCodeToEdit] = useState({
-    id:code.id,
+    id: code.id,
     topic: code.topic,
     code: code.code,
     url: code.url,
     author: code.author,
-    // created:code.created
   });
 
   const router = useRouter();
@@ -32,20 +31,30 @@ const Code: React.FC<CodeProps> = ({ code }) => {
     router.refresh();
   };
 
-  const handleChange = () => {
-    // const name = e.tar
-  }
+  const handleChange = (e: ChangeEvent<HTMLInputElement> | any) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setCodeToEdit({ ...codeToEdit, [name]: value });
+  };
 
   const handleSubmitUpdate: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     await updateNote(code.id, {
       id: null,
-      topic: code.topic,
-      code: code.code,
-      url: code.url,
-      author: code.author,
+      topic: codeToEdit.topic,
+      code: codeToEdit.code,
+      url: codeToEdit.url,
+      author: codeToEdit.author,
       created: null,
+    });
+
+    setCodeToEdit({
+      id:"",
+      topic: "",
+      code: "",
+      url: "",
+      author: "",
     });
 
     setOpenModalEdit(!openModalEdit);
@@ -86,15 +95,15 @@ const Code: React.FC<CodeProps> = ({ code }) => {
               type="text"
               placeholder="Title / topic ..."
               className="input input-bordered w-full"
-              name="topicc"
-              value={code.topic}
+              name="topic"
+              defaultValue={code?.topic}
               onChange={handleChange}
             />
             <textarea
               className="textarea textarea-bordered w-full"
               placeholder="Note / Code..."
               name="code"
-              value={code.code}
+              defaultValue={code.code}
               onChange={handleChange}
             ></textarea>
             <input
@@ -102,7 +111,7 @@ const Code: React.FC<CodeProps> = ({ code }) => {
               placeholder="URL (optional)"
               className="input input-bordered w-full"
               name="url"
-              value={code.url}
+              defaultValue={code.url}
               onChange={handleChange}
             />
             <input
@@ -110,7 +119,7 @@ const Code: React.FC<CodeProps> = ({ code }) => {
               placeholder="Author (optional)"
               className="input input-bordered w-full"
               name="author"
-              value={code.author}
+              defaultValue={code.author}
               onChange={handleChange}
             />
           </div>
@@ -124,7 +133,8 @@ const Code: React.FC<CodeProps> = ({ code }) => {
 
       <Modal modalOpen={openModalDelete} setModalOpen={setOpenModalDelete}>
         <h3 className="text-lg text-center mt-3">
-          Are you sure, you want to delete <br />"{codeToEdit.topic}" ?
+          Are you sure, you want to delete <br />{" "}
+          <span className="font-black"> "{codeToEdit.topic}" </span> ?
         </h3>
         <div className="modal-action">
           <button

@@ -23,7 +23,7 @@ import { ICode } from "./types/codes"
     const res = await fetch(`http://localhost:8000/api/codes/${id}/`,{
       method: "PUT",
       headers:{
-        "Content-Type": "application/json"
+        "Content-Type": "application/json; charset=utf8"
       },
       body:JSON.stringify(body)
       
