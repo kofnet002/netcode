@@ -4,5 +4,5 @@ export interface ICode {
     code: string 
     url: string 
     author: string 
-    created: string |  null
+    created?: string | null
 }

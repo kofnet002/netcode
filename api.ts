@@ -1,9 +1,15 @@
 import { ICode } from "./types/codes"
 
+
   export const getNotes = async () => {
-    const res = await fetch("http://localhost:8000/api/codes/",{cache:"no-store"})
+    const res = await fetch("http://localhost:8000/api/codes/", {cache:"no-cache"})
     const data = await res.json()
-    // console.log(data)
+    return data
+  }
+
+  export const searchNotes = async (query: string) => {
+    const res = await fetch(`http://localhost:8000/api/codes/?search=${query}`)
+    const data = await res.json()
     return data
   }
 
@@ -23,7 +29,8 @@ import { ICode } from "./types/codes"
     const res = await fetch(`http://localhost:8000/api/codes/${id}/`,{
       method: "PUT",
       headers:{
-        "Content-Type": "application/json; charset=utf8"
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       body:JSON.stringify(body)
       

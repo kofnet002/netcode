@@ -1,17 +1,28 @@
 "use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("night");
+  const [query, setQuery] = useState("");
 
-  const toggleTheme = () => {
+  const router = useRouter();
+
+;  const toggleTheme = () => {
     setTheme(theme === "night" ? "light" : "night");
   };
 
   useEffect(() => {
     document.querySelector("html").setAttribute("data-theme", theme);
   }, [theme]);
+
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const searchQuery = encodeURI(query)
+    router.push(`/search/?q=${searchQuery}`)
+  };
 
   return (
     <>
@@ -22,9 +33,13 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex-none gap-2">
-          <div className="form-control">
+          <div className="form-control text-sm">
             <label className="swap swap-rotate">
-              <input type="checkbox" onClick={toggleTheme} />
+              <input
+                type="checkbox"
+                style={{ fontSize: "2px" }}
+                onClick={toggleTheme}
+              />
               <svg
                 className="swap-on fill-current w-10 h-10"
                 xmlns="http://www.w3.org/2000/svg"
@@ -41,12 +56,16 @@ const Navbar = () => {
               </svg>
             </label>
           </div>
-          <div className="form-control">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input input-bordered"
-            />
+          <div className="form-control hidden md:block">
+            <form action="" method="GET" onSubmit={handleSearch}>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="input input-bordered input-md"
+              />
+            </form>
           </div>
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">

@@ -62,10 +62,10 @@ const Code: React.FC<CodeProps> = ({ code }) => {
   };
 
   return (
-    <div className="card_ w-9 bg-base-100 shadow-xl">
+    <div className="card_ w-7 bg-base-100 shadow-xl">
       <img src="https://images.pexels.com/photos/879109/pexels-photo-879109.jpeg?auto=compress&cs=tinysrgb&w=300" />
-      <h3>{code.topic}</h3>
-      <p className="description">{code.topic.substring(0, 15)}...</p>
+      <h3>{code.topic.substring(0, 20)}...</h3>
+      <p className="description">{code.code.substring(0, 30)}...</p>
       <div className="focus-content">
         <p className="flex gap-3 justify-between">
           <span>{code.created}</span>
