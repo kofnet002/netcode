@@ -1,11 +1,41 @@
+"use client"
 
+import { ICode } from "@/types/codes";
 import AddCode from "./components/AddCode";
 import CodeList from "./components/CodeList";
-import { getNotes } from "@/api";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-const HomePage = async () => {
-  
-  const notes = await getNotes();
+const HomePage = () => {
+  const baseUrl = "http://localhost:8000/api/codes/";
+
+  const { data: session } = useSession();
+
+  const [notes, setNotes] = useState<ICode[]>([]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      if (session?.user?.access) {
+        const res = await fetch(baseUrl, {
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.user.access}`,
+          },
+        });
+
+        if (res.status === 200) {
+          const data = await res.json();
+          setNotes(data);
+        } else {
+          console.log("Something went wrong, failed to retrieve notes");
+        }
+      }
+    };
+
+    fetchNotes();
+  }, [session]);
+
 
   return (
     <div>

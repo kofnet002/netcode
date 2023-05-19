@@ -1,14 +1,16 @@
 "use client";
+
+
 import { AiOutlinePlus } from "react-icons/ai";
 import Modal from "./Modal";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import { useRouter } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-import { addNote } from "@/api";
-import { ICode } from "@/types/codes";
+import { useSession } from "next-auth/react";
 
 const AddCode = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const { data: session } = useSession()
 
   const [note, setNote] = useState({
     id: "",
@@ -29,25 +31,41 @@ const AddCode = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    await addNote({
-      id: null,
-      topic: note.topic,
-      code: note.code,
-      url: note.url,
-      author: note.author,
-      created: null,
-    });
+    try {
+      fetch("http://localhost:8000/api/codes/", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json; charset=utf8",
+          Authorization: `Bearer ${session?.user.access}`,
+        },
+        body: JSON.stringify({
+          id: null,
+          topic: note.topic,
+          code: note.code,
+          url: note.url,
+          author: note.author,
+          created: null,
+        })
+      })
 
-    setNote({
-      id: "",
-      topic: "",
-      code: "",
-      url: "",
-      author: "",
-    });
+      router.refresh(); // refresh the page to update the UI
 
-    router.refresh(); // refresh the page to update the UI
+      setNote({
+        id: "",
+        topic: "",
+        code: "",
+        url: "",
+        author: "",
+      });
+      setModalOpen(false)
+    } catch (error) {
+      console.log("Something went wrong", error);
+    }
+
+
   };
+
   return (
     <div>
       <button

@@ -1,10 +1,13 @@
 "use client";
 
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
+  const {data:session} = useSession()
+  
   const [theme, setTheme] = useState("night");
   const [query, setQuery] = useState("");
 
@@ -77,7 +80,7 @@ const Navbar = () => {
               tabIndex={0}
               className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
             >
-              <li>
+              {/* <li>
                 <a className="justify-between">
                   Profile
                   <span className="badge">New</span>
@@ -85,9 +88,15 @@ const Navbar = () => {
               </li>
               <li>
                 <a>Settings</a>
-              </li>
+              </li> */}
               <li>
-                <a>Logout</a>
+              {session?.user ? (
+                <a onClick={() => signOut()}>Logout</a>
+                ):(
+                  <Link href="/login">
+                    Login
+                  </Link>
+              )}
               </li>
             </ul>
           </div>

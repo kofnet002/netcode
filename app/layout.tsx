@@ -1,8 +1,9 @@
 import Navbar from "./components/Navbar";
+import Provider from "./components/Provider";
 import "./globals.css";
-import { Montserrat } from "next/font/google";
+import { Poppins } from "next/font/google";
 
-const inter = Montserrat({ subsets: ["latin"] });
+const poppins = Poppins({ subsets: ["latin"], weight:['300', '700'] });
 
 export const metadata = {
   title: "Net Code",
@@ -18,9 +19,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={poppins.className}>
+        <Provider>
         <Navbar />
         {children}
+        </Provider>
       </body>
     </html>
   );
