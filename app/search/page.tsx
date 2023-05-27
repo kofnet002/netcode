@@ -4,6 +4,7 @@ import { searchNotes } from "@/api";
 import { useSearchParams } from "next/navigation";
 import Code from "../components/Code";
 import Image from "next/image";
+import { ICode } from "@/types/codes";
 
 const SearchPage = async () => {
   const search = useSearchParams();
@@ -16,7 +17,7 @@ const SearchPage = async () => {
       <div className="overflow-x-auto">
         {codes.length ? (
           <div className="flex flex-wrap items-center justify-center gap-5">
-            {codes.map((code) => (
+            {codes.map((code:ICode) => (
               <Code key={code.id} code={code} />
             ))}
           </div>

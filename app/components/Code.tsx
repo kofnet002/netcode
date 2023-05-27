@@ -1,10 +1,15 @@
 "use client";
+
+
 import { ICode } from "@/types/codes";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import { FiEdit, FiEye, FiTrash2 } from "react-icons/fi";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
-import { deleteNote, updateNote } from "@/api";
+// import { deleteNote, updateNote } from "@/api";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { decodedToken } from "./Token";
 
 interface CodeProps {
   code: ICode;
@@ -15,6 +20,8 @@ const Code: React.FC<CodeProps> = ({ code }) => {
   const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
   const [openModalView, setOpenModalView] = useState<boolean>(false);
 
+
+
   const [codeToEdit, setCodeToEdit] = useState({
     id: code.id,
     topic: code.topic,
@@ -24,11 +31,25 @@ const Code: React.FC<CodeProps> = ({ code }) => {
   });
 
   const router = useRouter();
+  const { data: session } = useSession()
+  const dToken: any = decodedToken(session?.user.access)
 
   const handleDeleteCode = async (id: number) => {
-    await deleteNote(code.id);
-    setOpenModalDelete(!openModalDelete);
-    router.refresh();
+    // await deleteNote(code.id);
+    try {
+      const res = await fetch(`http://localhost:8000/api/codes/${id}/`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user.access}`
+        }
+      })
+      setOpenModalDelete(false)
+      router.refresh();
+      return res.json()
+    } catch (error) {
+      console.log("Something went wrong ", error);
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement> | any) => {
@@ -40,30 +61,66 @@ const Code: React.FC<CodeProps> = ({ code }) => {
   const handleSubmitUpdate: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
-    await updateNote(code.id, {
-      id: null,
-      topic: codeToEdit.topic,
-      code: codeToEdit.code,
-      url: codeToEdit.url,
-      author: codeToEdit.author,
-      created: null,
-    });
+    try {
+      if (session?.user?.access) {
 
-    setCodeToEdit({
-      id:"",
-      topic: "",
-      code: "",
-      url: "",
-      author: "",
-    });
+        const res = await fetch(`http://localhost:8000/api/codes/${code.id}/`, {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+            Authorization: `Bearer ${session?.user.access}`
+          },
+          body: JSON.stringify({
+            user: dToken.user_id,
+            id: null,
+            topic: codeToEdit.topic,
+            code: codeToEdit.code,
+            url: codeToEdit.url,
+            author: codeToEdit.author,
+            created: null,
+          })
 
-    setOpenModalEdit(!openModalEdit);
-    router.refresh(); // refresh the page to update the UI
+        })
+
+        setCodeToEdit({
+          id: "",
+          topic: "",
+          code: "",
+          url: "",
+          author: "",
+        });
+
+        setOpenModalEdit(!openModalEdit);
+        router.refresh(); // refresh the page to update the UI
+
+        return await res.json()
+
+        // await updateNote(code.id, {
+        //   id: null,
+        //   topic: codeToEdit.topic,
+        //   code: codeToEdit.code,
+        //   url: codeToEdit.url,
+        //   author: codeToEdit.author,
+        //   created: null,
+        // });
+
+
+      }
+    } catch (error) {
+      console.log("Something went wrong during update", error);
+    }
+
   };
-
   return (
     <div className="card_ w-7 bg-base-100 shadow-xl">
-      <img src="https://images.pexels.com/photos/879109/pexels-photo-879109.jpeg?auto=compress&cs=tinysrgb&w=300" />
+      <Image
+        src={`http://localhost:8000/${code.picture}`}
+        width={200}
+        height={800}
+        alt="code"
+        priority
+      />
       <h3>{code.topic.substring(0, 20)}...</h3>
       <p className="description">{code.code.substring(0, 30)}...</p>
       <div className="focus-content">

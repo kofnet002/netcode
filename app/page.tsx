@@ -5,12 +5,13 @@ import AddCode from "./components/AddCode";
 import CodeList from "./components/CodeList";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const HomePage = () => {
   const baseUrl = "http://localhost:8000/api/codes/";
+  const router = useRouter()
 
   const { data: session } = useSession();
-
   const [notes, setNotes] = useState<ICode[]>([]);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const HomePage = () => {
         if (res.status === 200) {
           const data = await res.json();
           setNotes(data);
+          router.refresh()
         } else {
           console.log("Something went wrong, failed to retrieve notes");
         }

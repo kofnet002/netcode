@@ -1,16 +1,19 @@
 "use client";
 
-
 import { AiOutlinePlus } from "react-icons/ai";
 import Modal from "./Modal";
 import { ChangeEvent, FormEventHandler, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { decodedToken } from "./Token";
+
 
 const AddCode = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const { data: session } = useSession()
+  const accessToken: any = session?.user.access
+  const dToken: any = decodedToken(accessToken)
 
   const [note, setNote] = useState({
     id: "",
@@ -30,41 +33,55 @@ const AddCode = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    const image: any = document.querySelector('#code_image')
+    const code_image = image.files[0]
+
+    console.log(code_image);
 
     try {
-      fetch("http://localhost:8000/api/codes/", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json; charset=utf8",
-          Authorization: `Bearer ${session?.user.access}`,
-        },
-        body: JSON.stringify({
-          id: null,
-          topic: note.topic,
-          code: note.code,
-          url: note.url,
-          author: note.author,
-          created: null,
-        })
-      })
+      if (session?.user?.access) {
+        const response = await fetch("http://localhost:8000/api/codes/", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.user.access}`,
+          },
+          body: JSON.stringify({
+            user: dToken.user_id,
+            id: null,
+            topic: note.topic,
+            code: note.code,
+            url: note.url,
+            author: note.author,
+            created: null,
+          }),
+        });
 
-      router.refresh(); // refresh the page to update the UI
-
-      setNote({
-        id: "",
-        topic: "",
-        code: "",
-        url: "",
-        author: "",
-      });
-      setModalOpen(false)
+        if (response.ok) {
+          // Code to handle successful response
+          // For example, you can update the UI or perform additional actions
+          router.refresh(); // refresh the page to update the UI
+          router.refresh(); // refresh the page to update the UI
+          setNote({
+            id: "",
+            topic: "",
+            code: "",
+            url: "",
+            author: "",
+          });
+          setModalOpen(false);
+        } else {
+          // Code to handle unsuccessful response
+          // For example, you can display an error message or handle the error in a different way
+          console.log("Error occurred during the request.");
+        }
+      }
     } catch (error) {
       console.log("Something went wrong", error);
     }
-
-
   };
+
 
   return (
     <div>
@@ -94,6 +111,7 @@ const AddCode = () => {
               value={note.code}
               onChange={handleChange}
             ></textarea>
+            <input type="file" name="code_image" id="code_image" accept="image/*" />
             <input
               type="text"
               placeholder="URL (optional)"

@@ -1,9 +1,10 @@
 import Navbar from "./components/Navbar";
 import Provider from "./components/Provider";
 import "./globals.css";
-import { Poppins } from "next/font/google";
+import { Montserrat, Poppins } from "next/font/google";
 
-const poppins = Poppins({ subsets: ["latin"], weight:['300', '700'] });
+// const poppins = Poppins({ subsets: ["latin"], weight: ['300', '700'] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Net Code",
@@ -12,17 +13,22 @@ export const metadata = {
   keywords: "code keep, code note",
 };
 
+
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body className={montserrat.className}>
         <Provider>
-        <Navbar />
-        {children}
+          {/* {showHeader && <Navbar />} */}
+
+          <Navbar />
+          {children}
         </Provider>
       </body>
     </html>
